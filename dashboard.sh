@@ -26,4 +26,4 @@ cleanup() {
 }
 trap cleanup SIGINT
 
-watch -c -t -n 0.1 cat "$file"
+watch -ctn 0.1 cat "$file"
