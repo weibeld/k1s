@@ -1,6 +1,6 @@
 # The world's simplest Kubernetes dashboard
 
-A command-line based Kubernetes "dashboard" displaying the currently existing Pods in real-time.
+A command-line based Kubernetes "dashboard" displaying the currently existing Pods in a given namespace in real-time.
 
 The dashboard is implemented as a [Bash script](dashboard.sh) with less than 30 lines of code.
 
