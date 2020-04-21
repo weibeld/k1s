@@ -5,7 +5,7 @@ file=$(mktemp)
 echo -e "Pods in '$namespace' namespace:\n" >>"$file"
 
 kubectl proxy -p 58154 &>/dev/null &
-sleep 0.4
+printf Loading && for i in 1 2 3; do printf . && sleep 0.3; done
 
 unbuffer curl "http://localhost:58154/api/v1/namespaces/$namespace/pods?watch" |
   while read -r line; do
