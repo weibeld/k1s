@@ -1,8 +1,8 @@
-# The world's simplest Kubernetes dashboard
+# k1s: the world's simplest Kubernetes dashboard
 
 A command-line based Kubernetes "dashboard" displaying the Pods in a given namespace in real-time.
 
-The dashboard is implemented as a [Bash script](dashboard.sh) with less than 30 lines of code.
+The dashboard is implemented as a [Bash script](k1s.sh) with about 30 lines of code.
 
 ![Screencast](assets/screencast.gif)
 
@@ -10,7 +10,7 @@ The dashboard is implemented as a [Bash script](dashboard.sh) with less than 30 
 ## Usage
 
 ```bash
-./dashboard.sh
+./k1s.sh
 ```
 
 To quit, type **_Ctrl-C_**.
@@ -20,7 +20,7 @@ By default, the `default` namepace is used. You can set a different namespace by
 For example:
 
 ```bash
-./dashboard.sh kube-system
+./k1s.sh kube-system
 ```
 
 ## Dependencies

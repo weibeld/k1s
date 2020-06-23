@@ -1,8 +1,16 @@
 #!/bin/bash
 
 namespace=${1:-default}
+resource=pods
 file=$(mktemp)
-echo -e "Pods in '$namespace' namespace:\n" >>"$file"
+
+cat <<EOF >"$file"
+ ____ ____ ____
+||k |||1 |||s ||
+||__|||__|||__||  Namespace: $namespace
+|/__\|/__\|/__\|  Resource: $resource
+
+EOF
 
 exec 3< <(kubectl proxy -p 0)
 port=$(head -n 1 <&3 | sed 's/.*:\([0-9]\{4,5\}\)\b.*/\1/')
