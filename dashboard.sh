@@ -4,10 +4,12 @@ namespace=${1:-default}
 file=$(mktemp)
 echo -e "Pods in '$namespace' namespace:\n" >>"$file"
 
-kubectl proxy -p 58154 &>/dev/null &
+exec 3< <(kubectl proxy -p 0)
+port=$(head -n 1 <&3 | sed 's/.*:\([0-9]\{4,5\}\)\b.*/\1/')
+
 printf Loading && for i in 1 2 3; do printf . && sleep 0.3; done
 
-curl -N -s "http://localhost:58154/api/v1/namespaces/$namespace/pods?watch=true" |
+curl -N -s "http://localhost:$port/api/v1/namespaces/$namespace/pods?watch=true" |
   while read -r line; do
     name=$(jq -r .object.metadata.name <<<"$line")
     status=$(jq -r .object.status.phase <<<"$line")
@@ -19,11 +21,5 @@ curl -N -s "http://localhost:58154/api/v1/namespaces/$namespace/pods?watch=true"
       DELETED) sed -i "/^$name .*$/d" "$file";;
     esac
   done &
-
-cleanup() {
-  pkill -fn "curl http://localhost:58154"
-  pkill -fn "kubectl proxy"
-}
-trap cleanup SIGINT
 
 watch -ctn 0.1 cat "$file"
