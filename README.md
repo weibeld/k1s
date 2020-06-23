@@ -27,13 +27,6 @@ For example:
 
 The Bash script requires the following commands to be installed on the local system:
 
-- [**`unbuffer`**](https://core.tcl-lang.org/expect/index)
-    ```bash
-    # macOS
-    brew install expect
-    # Linux
-    sudo apt-get install -y expect
-    ```
 - [**`jq`**](https://stedolan.github.io/jq/)
     ```bash
     # macOS
@@ -45,6 +38,15 @@ The Bash script requires the following commands to be installed on the local sys
     ```bash
     # macOS
     brew install watch
+    # Linux
+    # Installed by default
+    ```
+- [**`curl`**](https://curl.haxx.se/)
+    ```bash
+    # macOS
+    # Installed by default
+    # Linux
+    # sudo apt-get install -y curl
     ```
 
 ## Minimal "one-liner" execution
