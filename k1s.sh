@@ -11,6 +11,7 @@ if ! path=$(kubectl get "$resource_type" -n "$namespace" -v 6 2>&1 >/dev/null | 
   kill -9 "$!" && echo -e "\nInvalid resource type: $resource_type" && exit 1
 fi
 kill -9 "$!" && wait "$!" 2>/dev/null
+resource_type=${path##*/}
 
 # Start kubectl proxy
 exec 4< <(kubectl proxy -p 0)
@@ -21,27 +22,33 @@ cat <<EOF >"$file"
  ____ ____ ____
 ||k |||1 |||s ||  Kubernetes Dashboard
 ||__|||__|||__||  Namespace: $namespace
-|/__\|/__\|/__\|  Resources: ${path##*/}
+|/__\|/__\|/__\|  Resources: $resource_type
 
 EOF
 
-colorize() {
-    case "$1" in Running) color=32;; Pending) color=33;; *) color=31;; esac
-    printf "\033[${color}m$1\033[0m"
+color() {
+  case "$1" in 0) c=32;; *) c=33;; esac
+  echo -e "\033[${c}m$2\033[0m"
 }
 
 curl -N -s "http://localhost:$port$path?watch=true" |
   while read -r line; do
     name=$(jq -r '.object.metadata.name' <<<"$line")
-    if [[ "${path##*/}" = pods ]]; then
-      pod_info=$(jq -r '.object.status.phase' <<<"$line")
+    case "$resource_type" in
+    pods)
+      info=$(jq -r '.object.status.phase' <<<"$line")
       is_ready=$(jq -r 'if .object.status | has("conditions") then .object.status.conditions[] | select(.type=="Ready").status else "False" end' <<<"$line")
-      [[ "$pod_info" = Running && "$is_ready" != True ]] && pod_info=Pending
-      pod_info=$(colorize "$pod_info")
-    fi
+      [[ "$info" = Running && "$is_ready" != True ]] && info=Pending
+      [[ "$info" = Running ]] && info=$(color 0 "$info") || info=$(color 1 "$info") ;;
+    deployments|replicasets|statefulsets)
+      spec=$(jq -r '.object.spec.replicas' <<<"$line")
+      stat=$(jq -r '.object.status.readyReplicas // 0' <<<"$line")
+      info="($stat/$spec)"
+      [[ "$stat" = "$spec" ]] && info=$(color 0 "$info") || info=$(color 1 "$info") ;;
+    esac
     case $(jq -r .type <<<"$line") in
-      ADDED) echo "$name $pod_info" >>"$file" ;;
-      MODIFIED) sed -i "s/^$name .*$/$name $pod_info/" "$file" ;;
+      ADDED) echo "$name $info" >>"$file" ;;
+      MODIFIED) sed -i "s/^$name .*$/$name ${info//\//\\/}/" "$file" ;;
       DELETED) sed -i "/^$name .*$/d" "$file";;
     esac
   done &
