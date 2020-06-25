@@ -7,7 +7,7 @@ resource_type=${2:-pods}
 
 # Check resource type and identify API path
 printf Loading && while true; do printf . && sleep 0.1; done &
-if ! path=$(kubectl get "$resource_type" -n "$namespace" -v 6 2>&1 >/dev/null | grep GET | tail -n 1 | sed -n 's#.*https://[^/]*\([/a-z0-9-]*\).*#\1#p'); then
+if ! path=$(kubectl get "$resource_type" -n "$namespace" -v 6 2>&1 >/dev/null | grep GET | tail -n 1 | sed -n 's#.*https://[^/]*\([a-z0-9/.-]*\).*#\1#p'); then
   kill -9 "$!" && echo -e "\nInvalid resource type: $resource_type" && exit 1
 fi
 kill -9 "$!" && wait "$!" 2>/dev/null
