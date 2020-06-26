@@ -45,13 +45,13 @@ Also make sure that you have all the [dependencies](#dependencies) installed on 
 The [`k1s`](k1s) script is run directly on your local machine. It has the following command-line interface:
 
 ```bash
-k1s [<namespace>] [<resource-type>]
+k1s [namespace] [resource-type]
 ```
 
 Both arguments are optional. The default values are:
 
-- `<namespace>`: _default_
-- `<resource-type>`: _pods_
+- `namespace`: _default_
+- `resource-type`: _pods_
 
 You can run multiple instances of the `k1s` script simultaneously.
 
@@ -119,7 +119,7 @@ k1s default ReplicaSet
 
 ### All namespaces and non-namespaced resources
 
-You can specify `-` for the `<namespace>` argument to list the specified resource type across all namespaces of the cluster.
+You can specify `-` for the `namespace` argument to list the specified resource type across all namespaces of the cluster.
 
 For example, the following displays the Deployments from all the namespaces:
 
