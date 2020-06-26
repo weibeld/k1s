@@ -1,13 +1,13 @@
-# k1s - the world's tiniest Kubernetes dashboard
+# k1s: The world's tiniest Kubernetes dashboard
 
-A simplistic Kubernetes dashboard implemened with 50 lines of Bash code.
+A simplistic Kubernetes dashboard implemented with 50 lines of Bash code.
 
 ```
- ____ ____ ____                                                     |┻┳
-||k |||1 |||s ||                                                 __ |┳┻
-||__|||__|||__||   The world's tiniest Kubernetes dashboard    (•.• |┻┳
-|/__\|/__\|/__\|                                                  \⊃|┳┻
-                                                                    |┻┳
+ ____ ____ ____                                                        |┻┳
+||k |||1 |||s ||                                                    __ |┳┻
+||__|||__|||__||     The world's tiniest Kubernetes dashboard     (•.• |┻┳
+|/__\|/__\|/__\|                                                     \⊃|┳┻
+                                                                       |┻┳
 ```
 
 ![Screencast](assets/screencast-1.gif)
@@ -15,15 +15,15 @@ A simplistic Kubernetes dashboard implemened with 50 lines of Bash code.
 
 ## What is it?
 
-k1s is a minimalistic Kubernetes dashboard that allows to observe any resources in any namespace (or across all namespaces) of your Kubernetes cluster in real time.
+A minimalistic Kubernetes dashboard allowing you to observe any resource type in any namespace (or across all namespaces) in real-time.
 
-It's implemented with 50 lines of Bash code.
+It's implemented as a Bash script with 50 lines of code.
 
 ## What is it not?
 
 k1s is not a full-featured production-grade Kubernetes dashboard (for such a use case, it would be better to use a real programming language, like Go).
 
-Instead, k1s is an experiment of how far you can go with using Bash for building something useful with as little code and as few dependencies as possible.
+Instead, it's an experiment of how far you can go with building something useful with Bash with as little code and as few dependencies as possible.
 
 
 ## Installation
@@ -50,14 +50,14 @@ k1s [<namespace>] [<resource-type>]
 
 Both arguments are optional. The default values are:
 
-- `<namespace>`: `default`
-- `<resource-type>`: `pods`
+- `<namespace>`: _default_
+- `<resource-type>`: _pods_
 
-You can run multiple instances of the `k1s` script simultanesouly.
+You can run multiple instances of the `k1s` script simultaneously.
 
 To exit the dashboard, type _Ctrl-C_.
 
-### Examples
+### Example usages
 
 Observe Pods in the `default` namespace:
 
@@ -86,7 +86,7 @@ k1s kube-system deployments
 Observe Deployments across all namespaces:
 
 ```bash
-k1s - Deployments
+k1s - deployments
 ```
 
 Observe ClusterRoles (non-namespaced resource):
@@ -119,9 +119,9 @@ k1s default ReplicaSet
 
 ### All namespaces and non-namespaced resources
 
-You can specify `-` for the `<namespace>` argument to list the requested resources across all namespaces of the cluster.
+You can specify `-` for the `<namespace>` argument to list the specified resource type across all namespaces of the cluster.
 
-For example, the following displays the Deployments across all namespaces:
+For example, the following displays the Deployments from all the namespaces:
 
 ```bash
 k1s - deployments
@@ -165,13 +165,13 @@ Furthermore, you also must have installed and configured [`kubectl`](https://kub
 
 ## Example application
 
-A suitable example application of k1s is observing scalings and rolling updates of Deployments:
+A suitable example application of k1s is observing the scalings and rolling updates of a Deployment:
 
 ![Example application](assets/screencast-2.gif)
 
-Note how during the rolling update you can observe the ReplicaSets that the Deployment creates and manages, and how the replica count of the Deployment stays within a certain range.
+Note how during the rolling update you can observe the ReplicaSets that the Deployment creates and manages, and how the replica count of the Deployment always stays within a certain range.
 
-> You can influence this range with the [`maxSurge` and `maxUnavailable`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment) settings in the Deployment.
+> You can influence this range with the [`maxSurge` and `maxUnavailable`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment) settings in the Deployment specification.
 
 To recreate the above example, launch three instances of k1s, one for Deployments, one for ReplicaSets, and one for Pods:
 
