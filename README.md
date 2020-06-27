@@ -10,7 +10,7 @@ A simplistic Kubernetes dashboard implemented with 50 lines of Bash code.
                                                                        |┻┳
 ```
 
-![Screencast](assets/screencast-1.gif)
+![Screencast](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-1.gif)
 
 
 ## What is it?
@@ -167,7 +167,7 @@ Furthermore, you also must have installed and configured [`kubectl`](https://kub
 
 A suitable example application of k1s is observing the scalings and rolling updates of a Deployment:
 
-![Example application](assets/screencast-2.gif)
+![Example application](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-2.gif)
 
 Note how during the rolling update you can observe the ReplicaSets that the Deployment creates and manages, and how the replica count of the Deployment always stays within a certain range.
 
