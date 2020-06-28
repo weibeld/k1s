@@ -28,6 +28,14 @@ Instead, it's an experiment of how far you can go with building something useful
 
 ## Installation
 
+### macOS with Homebrew
+
+```bash
+brew install weibeld/core/k1s
+```
+
+### All other scenarios
+
 Download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`. For example:
 
 ```bash
@@ -38,7 +46,36 @@ Download the [`k1s`](k1s) script, make it executable, and move it to any directo
 }
 ```
 
-Also make sure that you have all the [dependencies](#dependencies) installed on your machine.
+## Dependencies
+
+The `k1s` script depends on the following additional tools being installed on your system:
+
+- [**`jq`**](https://stedolan.github.io/jq/)
+    ```bash
+    # macOS
+    brew install jq
+    # Linux
+    sudo apt-get install jq
+    ```
+- [**`watch`**](https://linux.die.net/man/1/watch)
+    ```bash
+    # macOS
+    brew install watch
+    # Linux (installed by default)
+    ```
+- [**`curl`**](https://curl.haxx.se/)
+    ```bash
+    # macOS (installed by default)
+    # Linux
+    sudo apt-get install curl
+    ```
+- [**`kubectl`**](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+    ```bash
+    # macOS
+    brew install kubernetes-cli
+    # Linux
+    # See https://kubernetes.io/docs/tasks/tools/install-kubectl/
+    ```
 
 ## Usage
 
@@ -137,31 +174,6 @@ k1s - persistentvolumes
 
 > You can find out all the non-namespaced resources with `kubectl api-resources --namespaced=false`.
 
-## Dependencies
-
-The `k1s` script depends on the following commands being installed on your machine:
-
-- [**`jq`**](https://stedolan.github.io/jq/)
-    ```bash
-    # macOS
-    brew install jq
-    # Linux
-    sudo apt-get install jq
-    ```
-- [**`watch`**](https://linux.die.net/man/1/watch)
-    ```bash
-    # macOS
-    brew install watch
-    # Linux (installed by default)
-    ```
-- [**`curl`**](https://curl.haxx.se/)
-    ```bash
-    # macOS (installed by default)
-    # Linux
-    sudo apt-get install curl
-    ```
-
-Furthermore, you also must have installed and configured [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) to point to your target cluster.
 
 ## Example application
 
