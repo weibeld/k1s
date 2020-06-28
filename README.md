@@ -1,13 +1,13 @@
-# k1s: The world's tiniest Kubernetes dashboard
+# k1s: The world's simplest Kubernetes dashboard
 
 A simplistic Kubernetes dashboard implemented with 50 lines of Bash code.
 
 ```
- ____ ____ ____                                                        |┻┳
-||k |||1 |||s ||                                                    __ |┳┻
-||__|||__|||__||     The world's tiniest Kubernetes dashboard     (•.• |┻┳
-|/__\|/__\|/__\|                                                     \⊃|┳┻
-                                                                       |┻┳
+ ____ ____ ____                                                         |┻┳
+||k |||1 |||s ||                                                     __ |┳┻
+||__|||__|||__||     The world's simplest Kubernetes dashboard     (•.• |┻┳
+|/__\|/__\|/__\|                                                      \⊃|┳┻
+                                                                        |┻┳
 ```
 
 ![Screencast](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-1.gif)
@@ -24,7 +24,6 @@ It's implemented as a Bash script with 50 lines of code.
 k1s is not a full-featured production-grade Kubernetes dashboard (for such a use case, it would be better to use a real programming language, like Go).
 
 Instead, it's an experiment of how far you can go with building something useful with Bash with as little code and as few dependencies as possible.
-
 
 ## Installation
 
@@ -218,4 +217,3 @@ Finally, delete the Deployment:
 ```bash
 kubectl delete deployment dep1
 ```
-
