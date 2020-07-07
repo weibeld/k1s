@@ -25,6 +25,10 @@ k1s is not a full-featured production-grade Kubernetes dashboard (for such a use
 
 Instead, it's an experiment of how far you can go with building something useful with Bash with as little code and as few dependencies as possible.
 
+## How does it work?
+
+With a lot of highly condensed Bash scripting. This [article](https://itnext.io/the-worlds-simplest-kubernetes-dashboard-k1s-4246e03191df) contains a line-by-line explanation of the code.
+
 ## Installation
 
 ### macOS with Homebrew
