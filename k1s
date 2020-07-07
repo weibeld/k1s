@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ "$1" = -v || "$1" = --version ]] && { echo "0.1.0"; exit; }
+[[ "$1" = -v || "$1" = --version ]] && { echo "0.1.1"; exit; }
 for d in jq watch curl kubectl; do which "$d" >/dev/null || { echo "Missing dependency: $d"; exit 1; }; done
 ns=${1:-default}; res=${2:-pods}
 
