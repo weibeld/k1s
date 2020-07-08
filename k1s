@@ -18,7 +18,7 @@ kill -9 "$!" && wait "$!" 2>/dev/null
 res=${path##*/}
 
 exec 3< <(kubectl proxy -p 0)
-port=$(head -n 1 <&3 | sed 's/.*:\([0-9]\{4,5\}\)\b.*/\1/')
+port=$(head -n 1 <&3 | sed 's/.*:\([0-9]\{4,5\}\).*/\1/')
 
 file=$(mktemp)
 cat <<EOF >"$file"
@@ -46,8 +46,8 @@ curl -N -s "http://localhost:$port$path?watch=true" |
     esac
     case $(jq -r .type <<<"$event") in
       ADDED) echo "$name $info" >>"$file" ;;
-      MODIFIED) sed -i "s/^$name .*$/$name ${info//\//\\/}/" "$file" ;;
-      DELETED) sed -i "/^$name .*$/d" "$file";;
+      MODIFIED) sed -i.bkp "s/^$name .*$/$name ${info//\//\\/}/" "$file" ;;
+      DELETED) sed -i.bkp "/^$name .*$/d" "$file";;
     esac
   done &
 
