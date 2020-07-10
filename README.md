@@ -15,19 +15,19 @@ A simplistic Kubernetes dashboard implemented with 50 lines of Bash code.
 
 ## What is it?
 
-A minimalistic Kubernetes dashboard allowing you to observe any resource type in any namespace (or across all namespaces) in real-time.
+A minimalistic Kubernetes dashboard allowing you to observe Kubernetes resources of any type in any namespace (or across all namespaces) in real-time.
 
 It's implemented as a Bash script with 50 lines of code.
 
 ## What is it not?
 
-k1s is not a full-featured production-grade Kubernetes dashboard (for such a use case, it would be better to use a real programming language, like Go).
+k1s does not attempt to be a fully-featured production-grade Kubernetes dashboard (for such cases, it would be better to use a real programming language, such as Go).
 
-Instead, it's an experiment of how far you can go with building something useful with Bash with as little code and as few dependencies as possible.
+Instead, it attempts to be as minimalistic as possible with the goal of being easy to install and use and adaptable to various use cases.
 
 ## How does it work?
 
-With a lot of highly condensed Bash scripting. This [article](https://itnext.io/the-worlds-simplest-kubernetes-dashboard-k1s-4246e03191df) contains a line-by-line explanation of the code.
+With a lot of highly condensed Bash scripting. [This article](https://itnext.io/the-worlds-simplest-kubernetes-dashboard-k1s-4246e03191df) explains how the code works.
 
 ## Installation
 
@@ -37,7 +37,7 @@ With a lot of highly condensed Bash scripting. This [article](https://itnext.io/
 brew install weibeld/core/k1s
 ```
 
-### All other scenarios
+### In all other cases
 
 Download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`. For example:
 
@@ -51,7 +51,7 @@ Download the [`k1s`](k1s) script, make it executable, and move it to any directo
 
 ## Dependencies
 
-The `k1s` script depends on the following additional tools being installed on your system:
+The `k1s` script depends on the following tools being installed on your system:
 
 - [**`jq`**](https://stedolan.github.io/jq/)
     ```bash
@@ -178,21 +178,25 @@ k1s - persistentvolumes
 > You can find out all the non-namespaced resources with `kubectl api-resources --namespaced=false`.
 
 
-## Example application
+## Usage scenario
 
-A suitable example application of k1s is observing the scalings and rolling updates of a Deployment:
+An example usage scenario of k1s is using multiple instances of k1s for observing what's going on under the hood of scaling and rolling update operations on a Deployment:
 
 ![Example application](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-2.gif)
 
-Note how during the rolling update you can observe the ReplicaSets that the Deployment creates and manages, and how the replica count of the Deployment always stays within a certain range.
+> Note how during the rolling update, you can observe how the replica count of the Deployment always stays within a certain range. You can influence this range with the [`maxSurge` and `maxUnavailable`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment) settings in the Deployment specification.
 
-> You can influence this range with the [`maxSurge` and `maxUnavailable`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment) settings in the Deployment specification.
-
-To recreate the above example, launch three instances of k1s, one for Deployments, one for ReplicaSets, and one for Pods:
+To recreate the above example, launch three instances of k1s in separate terminal windows (or in different [tmux](https://github.com/tmux/tmux/wiki) panes, as shown above):
 
 ```bash
 k1s default deployments
+```
+
+```bash
 k1s default replicasets
+```
+
+```bash
 k1s default pods
 ```
 
@@ -208,7 +212,7 @@ Scale the Deployment:
 kubectl scale deployment dep1 --replicas=10
 ```
 
-Change the container image in the Pod template of the Deployment, which causes a rolling update:
+Patch the Deployment with a new container image, which causes a rolling update:
 
 ```bash
 kubectl patch deployment dep1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"nginx","image":"nginx:1.19.0"}]}}}}'
@@ -221,3 +225,11 @@ Finally, delete the Deployment:
 ```bash
 kubectl delete deployment dep1
 ```
+
+## Advanced usage scenarios
+
+Here's a list of more advanced usage scenarios contributed by users of k1s:
+
+- [**mjbright/k1s-scenarios**](https://github.com/mjbright/k1s-scenarios) by Mike Bright
+
+> If you want to have your work added, file an issue, or directly make a pull request with your link added to this list.
