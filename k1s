@@ -52,9 +52,9 @@ watch_resource() {
 
   path=$(kubectl get "$res" "$([[ "$ns" = - ]] && echo --all-namespaces || echo -n=$ns)" -v 6 2>&1 >/dev/null | grep GET | tail -n 1 | sed -n 's#.*https://[^/]*\([a-z0-9/.-]*\).*#\1#p')
   pid=$?
-  kill -9 "$loading" && wait "$loading" 2>/dev/null
+  kill -9 "$loading" >/dev/null 2>&1 && wait "$loading" 2>/dev/null
   [[ "$pid" -ne 0 ]] && echo -e "\nInvalid resource type: $res" && exit 1
-  [[ $(echo -n "${path//[^\/]}" | wc -c) -lt 5 ]] && ns=-
+  # ???? [[ $(echo -n "${path//[^\/]}" | wc -c) -lt 5 ]] && ns=-
   res=${path##*/}
 
   curl -N -s "http://localhost:$port$path?watch=true" |
