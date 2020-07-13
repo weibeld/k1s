@@ -3,6 +3,8 @@
 [[ "$1" = -v || "$1" = --version ]] && { echo "0.1.2"; exit; }
 for d in jq watch curl kubectl; do which "$d" >/dev/null || { echo "Missing dependency: $d"; exit 1; }; done
 ns=${1:-default}; res=${2:-pods}
+showtype=0
+[ "$res" = "1" ] && { res="no,svc,rs,deploy"; showtype=1; }
 
 resources=$(echo $res | sed 's/,/ /g')
 
@@ -42,6 +44,8 @@ watch_resource() {
     while read -r event; do
       name=$(jq -r '.object.metadata.name' <<<"$event")
       case "$res" in
+      no*)
+        info=$(c 32)$(jq -r '.object.status.addresses[0].address' <<<"$event")$(c 0);;
       pods)
         phase=$(jq -r '.object.status.phase' <<<"$event")
         is_ready=$(jq -r 'if .object.status | has("conditions") then .object.status.conditions[] | if select(.type=="Ready").status=="True" then "1" else "" 
@@ -55,10 +59,11 @@ end else "" end' <<<"$event")
         stat=$(jq -r '.object.status.readyReplicas // 0' <<<"$event")
         [[ "$stat" = "$spec" ]] && info="$(c 32)($stat/$spec)$(c 0)" || info="$(c 33)($stat/$spec)$(c 0)" ;;
       esac
+      [ $showtype -ne 0 ] && name="${res}/${name}"
       case $(jq -r .type <<<"$event") in
         ADDED) echo "$name $info" >>"$file" ;;
-        MODIFIED) sed -i.bkp "s/^$name .*$/$name ${info//\//\\/}/" "$file" ;;
-        DELETED) sed -i.bkp "/^$name .*$/d" "$file";;
+        MODIFIED) sed -i.bkp "s|^$name .*$|$name ${info//\//\\/}|" "$file" ;;
+        DELETED) sed -i.bkp "|^$name .*$|d" "$file";;
       esac
     done &
 }
