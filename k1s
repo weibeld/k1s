@@ -41,13 +41,11 @@ $(cc 36) ____ ____ ____
 ||$(cc 33)k$(cc 36) |||$(cc 33)1$(cc 36) |||$(cc 33)s$(cc 36) ||  $(cc 0)Kubernetes Dashboard$(cc 36)
 ||__|||__|||__||  $(cc 0)Namespace: $ns$(cc 36)
 |/__\|/__\|/__\|  $(cc 0)Resources: $resources$(c 0)
-
 EOF
 else
     cat <<EOF >"$file_header"
 $(cc 33)Namespace: $ns$(c 0)
 $(cc 33)Resources: $resources$(c 0)
-
 EOF
 fi
 
