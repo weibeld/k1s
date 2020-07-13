@@ -45,8 +45,8 @@ $(cc 36) ____ ____ ____
 EOF
 else
     cat <<EOF >"$file_header"
-Namespace: $ns
-Resources: $resources
+$(cc 33)Namespace: $ns$(c 0)
+$(cc 33)Resources: $resources$(c 0)
 
 EOF
 fi
