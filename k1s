@@ -8,6 +8,21 @@ showtype=0
 
 resources=$(echo $res | sed 's/,/ /g')
 
+#MASTERIP=$(kubectl get nodes master --no-headers -o=custom-columns=IP:.status.addresses[0].address)
+#WORKER1IP=$(kubectl get nodes worker1 --no-headers -o=custom-columns=IP:.status.addresses[0].address)
+
+NODE_NUM=0
+for NODE in $(kubectl get nodes -l 'node-role.kubernetes.io/master' --no-headers | awk '{ print $1; }'); do
+    let NODE_NUM=NODE_NUM+1
+    eval export MASTER${NODE_NUM}IP=$(kubectl get nodes $NODE --no-headers -o=custom-columns=IP:.status.addresses[0].address)
+done
+NODE_NUM=0
+for NODE in $(kubectl get nodes -l '!node-role.kubernetes.io/master' --no-headers | awk '{ print $1; }'); do
+    let NODE_NUM=NODE_NUM+1
+    eval export WORKER${NODE_NUM}IP=$(kubectl get nodes $NODE --no-headers -o=custom-columns=IP:.status.addresses[0].address)
+done
+#set | grep MASTER; set | grep WORKER; exit
+
 c()  { echo -e "\033[$1m"; }
 cc() { echo -e "\033[$1;1m"; }
 
@@ -25,6 +40,8 @@ $(cc 36) ____ ____ ____
 |/__\|/__\|/__\|  $(cc 0)Resources: $resources$(c 0)
 
 EOF
+#echo "MASTER1IP=$MASTER1IP WORKER1IP=$WORKER1IP"
+#env | grep -E "(MASTER|WORKER)[0-9]IP" >> $file_header
 
 set -o pipefail
 
@@ -47,13 +64,30 @@ watch_resource() {
       no*)
         info=$(c 32)$(jq -r '.object.status.addresses[0].address' <<<"$event")$(c 0);;
       pods)
+	      #.metadata.name,pod:.status.podIP,host:.status.hostIP
+
+        podIP=$(jq -r '.object.status.podIP' <<<"$event")
+        host=$(jq -r '.object.status.hostIP' <<<"$event")
+	#for HOST in $(set | grep -E "(MASTER|WORKER)[0-9]IP"); do
+            #HOST=${HOST%%=*}
+	#done
+	case $host in
+            $MASTER1IP) host="master1";;
+            $MASTER2IP) host="master2";;
+            $MASTER3IP) host="master3";;
+            $WORKER1IP) host="worker1";;
+            $WORKER2IP) host="worker2";;
+            $WORKER3IP) host="worker3";;
+	esac
         phase=$(jq -r '.object.status.phase' <<<"$event")
         is_ready=$(jq -r 'if .object.status | has("conditions") then .object.status.conditions[] | if select(.type=="Ready").status=="True" then "1" else "" 
 end else "" end' <<<"$event")
         is_scheduled=$(jq -r 'if .object.status | has("conditions") then .object.status.conditions[] | if select(.type=="PodScheduled").status=="True" then "
 1" else "" end else "" end' <<<"$event")
         [[ "$is_scheduled" && ! "$is_ready" ]] && info=NonReady || info=$phase
-        [[ "$info" = Running ]] && info=$(c 32)$info$(c 0) || info=$(c 33)$info$(c 0) ;;
+        [[ "$info" = Running ]] && info=$(c 32)$info$(c 0) || info=$(c 33)$info$(c 0)
+	info="$info ${podIP}/${host}"
+	;;
       deployments|replicasets|statefulsets)
         spec=$(jq -r '.object.spec.replicas' <<<"$event")
         stat=$(jq -r '.object.status.readyReplicas // 0' <<<"$event")
