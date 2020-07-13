@@ -5,6 +5,8 @@ for d in jq watch curl kubectl; do which "$d" >/dev/null || { echo "Missing depe
 ns=${1:-default}; res=${2:-pods}
 showtype=0
 [ "$res" = "1" ] && { res="no,svc,rs,deploy"; showtype=1; }
+logo=0;
+[ "$1" = "-L" ] && { logo=1; }
 
 resources=$(echo $res | sed 's/,/ /g')
 
@@ -33,13 +35,22 @@ exec 3< <(kubectl proxy -p 0)
 port=$(head -n 1 <&3 | sed 's/.*:\([0-9]\{4,5\}\).*/\1/')
 
 file_header=$(mktemp); files="$file_header"
-cat <<EOF >"$file_header"
+if [ $logo -ne 0 ]; then
+    cat <<EOF >"$file_header"
 $(cc 36) ____ ____ ____
 ||$(cc 33)k$(cc 36) |||$(cc 33)1$(cc 36) |||$(cc 33)s$(cc 36) ||  $(cc 0)Kubernetes Dashboard$(cc 36)
 ||__|||__|||__||  $(cc 0)Namespace: $ns$(cc 36)
 |/__\|/__\|/__\|  $(cc 0)Resources: $resources$(c 0)
 
 EOF
+else
+    cat <<EOF >"$file_header"
+Namespace: $ns
+Resources: $resources
+
+EOF
+fi
+
 #echo "MASTER1IP=$MASTER1IP WORKER1IP=$WORKER1IP"
 #env | grep -E "(MASTER|WORKER)[0-9]IP" >> $file_header
 
