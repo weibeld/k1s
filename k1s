@@ -93,11 +93,12 @@ end else "" end' <<<"$event")
         stat=$(jq -r '.object.status.readyReplicas // 0' <<<"$event")
         [[ "$stat" = "$spec" ]] && info="$(c 32)($stat/$spec)$(c 0)" || info="$(c 33)($stat/$spec)$(c 0)" ;;
       esac
+
       [ $showtype -ne 0 ] && name="${res}/${name}"
       case $(jq -r .type <<<"$event") in
-        ADDED) echo "$name $info" >>"$file" ;;
+        ADDED)    echo "$name $info" >>"$file" ;;
         MODIFIED) sed -i.bkp "s|^$name .*$|$name ${info//\//\\/}|" "$file" ;;
-        DELETED) sed -i.bkp "s|^$name .*$|d" "$file";;
+        DELETED)  sed -i.bkp  "|^$name .*$|d" "$file";;
       esac
     done &
 }
