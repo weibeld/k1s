@@ -31,8 +31,7 @@ watch_resource() {
   local file=$res_$(mktemp); files+=" $file"
   echo > $file
 
-  path=$(kubectl get "$res" "$([[ "$ns" = - ]] && echo --all-namespaces || echo -n=$ns)" -v 6 2>&1 >/dev/null | grep GET | tail -n 1 | sed -n 's#.*https://[^
-/]*\([a-z0-9/.-]*\).*#\1#p')
+  path=$(kubectl get "$res" "$([[ "$ns" = - ]] && echo --all-namespaces || echo -n=$ns)" -v 6 2>&1 >/dev/null | grep GET | tail -n 1 | sed -n 's#.*https://[^/]*\([a-z0-9/.-]*\).*#\1#p')
   pid=$?
   kill -9 "$loading" && wait "$loading" 2>/dev/null
   [[ "$pid" -ne 0 ]] && echo -e "\nInvalid resource type: $res" && exit 1
