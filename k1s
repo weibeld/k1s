@@ -98,7 +98,7 @@ end else "" end' <<<"$event")
       case $(jq -r .type <<<"$event") in
         ADDED)    echo "$name $info" >>"$file" ;;
         MODIFIED) sed -i.bkp "s|^$name .*$|$name ${info//\//\\/}|" "$file" ;;
-        DELETED)  sed -i.bkp "m|^$name .*$|d" "$file";;
+        DELETED)  sed -i.bkp "\\|^$name .*$|d" "$file";;
       esac
     done &
 }
