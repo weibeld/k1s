@@ -1,0 +1,74 @@
+name: finalise-release
+on:
+  release:
+    types: [published]
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    env:
+      ARCHIVE_NAME: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
+    steps:
+      - name: download-source
+        run: curl -sL "${{ github.event.release.tarball_url }}" >"$ARCHIVE_NAME".tar.gz
+      - name: unzip-source
+        run: mkdir "$ARCHIVE_NAME" && tar -xzf "$ARCHIVE_NAME".tar.gz -C "$ARCHIVE_NAME" --strip-components 1
+      - name: check-version
+        run: '[[ $("$ARCHIVE_NAME"/k1s -v) = "${{ github.event.release.tag_name }}" ]]'
+      - name: clean-source
+        run: rm -rf "$ARCHIVE_NAME"/{.github,assets}
+      - name: create-archive
+        run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
+      - name: create-checksum
+        run: sha256sum "$ARCHIVE_NAME".tar.gz >checksum.txt
+      - name: upload-archive
+        id: upload-archive
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ env.ARCHIVE_NAME }}.tar.gz
+          asset_name: ${{ env.ARCHIVE_NAME }}.tar.gz
+          asset_content_type: application/gzip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: upload-checksum
+        id: upload-checksum
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: checksum.txt
+          asset_name: checksum.txt
+          asset_content_type: text/plain
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: sleep
+        run: sleep 5
+      - name: retrieve-checksum
+        id: retrieve-checksum
+        run: echo "::set-output name=checksum::$(curl -sL '${{ steps.upload-checksum.outputs.browser_download_url }}' | cut -d ' ' -f 1)"
+      - name: bump-homebrew-formula
+        run: |
+         curl -s -X POST \
+         -H "Authorization: Bearer ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+         -H "Accept: application/vnd.github.v3+json" \
+         https://api.github.com/repos/weibeld/homebrew-core/dispatches \
+         -d '
+           {
+             "event_type": "bump-formula",
+             "client_payload": {
+               "formula": "k1s",
+               "url": "${{ steps.upload-archive.outputs.browser_download_url }}",
+               "sha256": "${{ steps.retrieve-checksum.outputs.checksum }}"
+             }
+           }
+         '
+      - if: failure() 
+        name: error-delete-release
+        run: |
+          curl -s -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.event.repository.full_name }}/releases/${{ github.event.release.id }}
+          curl -s -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.event.repository.full_name }}/git/refs/tags/${{ github.event.release.tag_name }}
