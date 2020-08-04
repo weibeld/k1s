@@ -55,7 +55,7 @@ jobs:
              "client_payload": {
                "formula": "k1s",
                "url": "${{ steps.upload-archive.outputs.browser_download_url }}",
-               "sha256": "${{ steps.retrieve-checksum.outputs.checksum }}"
+               "sha256": "${{ steps.create-checksum.outputs.checksum }}"
              }
            }
          '
