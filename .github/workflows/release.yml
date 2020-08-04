@@ -60,7 +60,7 @@ jobs:
            }
          '
       - if: failure() 
-        name: error-delete-release
+        name: abort
         run: |
           curl -s -X DELETE \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
