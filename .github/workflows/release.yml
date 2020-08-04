@@ -1,4 +1,4 @@
-name: finalise-release
+name: release
 on:
   release:
     types: [published]
@@ -19,7 +19,10 @@ jobs:
       - name: create-archive
         run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
       - name: create-checksum
-        run: sha256sum "$ARCHIVE_NAME".tar.gz >checksum.txt
+        id: create-checksum
+        run: |
+          sha256sum "$ARCHIVE_NAME".tar.gz >checksum.txt
+          echo "::set-output name=checksum::$(cut -d ' ' -f 1 checksum.txt)"
       - name: upload-archive
         id: upload-archive
         uses: actions/upload-release-asset@v1
@@ -40,12 +43,7 @@ jobs:
           asset_content_type: text/plain
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: sleep
-        run: sleep 5
-      - name: retrieve-checksum
-        id: retrieve-checksum
-        run: echo "::set-output name=checksum::$(curl -sL '${{ steps.upload-checksum.outputs.browser_download_url }}' | cut -d ' ' -f 1)"
-      - name: bump-homebrew-formula
+      - name: trigger-formula-upgrade
         run: |
          curl -s -X POST \
          -H "Authorization: Bearer ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
@@ -53,7 +51,7 @@ jobs:
          https://api.github.com/repos/weibeld/homebrew-core/dispatches \
          -d '
            {
-             "event_type": "bump-formula",
+             "event_type": "upgrade-formula",
              "client_payload": {
                "formula": "k1s",
                "url": "${{ steps.upload-archive.outputs.browser_download_url }}",
