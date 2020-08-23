@@ -42,7 +42,8 @@ curl -N -s "http://localhost:$port$path?watch=true" |
     deployments|replicasets|statefulsets)
       spec=$(jq -r '.object.spec.replicas' <<<"$event")
       stat=$(jq -r '.object.status.readyReplicas // 0' <<<"$event")
-      [[ "$stat" = "$spec" ]] && info="$(c 32)($stat/$spec)$(c 0)" || info="$(c 33)($stat/$spec)$(c 0)" ;;
+      [[ "$stat" = "$spec" ]] && info="$(c 32)($stat/$spec)$(c 0)" || info="$(c 33)($stat/$spec)$(c 0)"
+      [[ "$stat" = "0" ]] && info="$(c 31)($stat/$spec)$(c 0)" ;;
     esac
     case $(jq -r .type <<<"$event") in
       ADDED) echo "$name $info" >>"$file" ;;
