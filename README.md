@@ -4,6 +4,13 @@ A minimalistic Kubernetes dashboard implemented with 50 lines of Bash code.
 
 ![Screencast](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-1.gif)
 
+## Contents
+
+1. [Introduction](#introduction)
+1. [Installation](#installation)
+1. [Usage](#usage)
+1. [Examples](#examples)
+
 ## Introduction
 
 ### What is it?
@@ -98,7 +105,7 @@ The `<resource-type>` argument may be set to any valid resource type name (inclu
 
 To exit the dashboard, type _Ctrl-C_.
 
-## Example usage scenario
+## Examples
 
 Below is an example usage scenario for k1s. It uses multiple instances of k1s for observing what's going on under the hood when scaling a Deployment:
 
@@ -146,7 +153,7 @@ Finally, delete the Deployment:
 kubectl delete deployment dep1
 ```
 
-## Advanced usage scenarios
+### Advanced usage scenarios
 
 Here's a list of more advanced usage scenarios contributed by users of k1s:
 
