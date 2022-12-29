@@ -31,15 +31,15 @@ With a lot of highly condensed Bash scripting. [This article](https://itnext.io/
 
 ## Installation
 
-### macOS with Homebrew
+### On macOS
 
 ```bash
-brew install weibeld/core/k1s
+brew install weibeld/tap/k1s
 ```
 
-### In all other cases
+### On other systems
 
-Download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`. For example:
+Simply download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`. For example:
 
 ```bash
 {
