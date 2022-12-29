@@ -1,33 +1,22 @@
 # k1s: The world's simplest Kubernetes dashboard
 
-A simplistic Kubernetes dashboard implemented with 50 lines of Bash code.
-
-```
- ____ ____ ____                                                         |┻┳
-||k |||1 |||s ||                                                     __ |┳┻
-||__|||__|||__||     The world's simplest Kubernetes dashboard     (•.• |┻┳
-|/__\|/__\|/__\|                                                      \⊃|┳┻
-                                                                        |┻┳
-```
+A minimalistic Kubernetes dashboard implemented with 50 lines of Bash code.
 
 ![Screencast](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-1.gif)
 
+## Introduction
 
-## What is it?
+### What is it?
 
-A minimalistic Kubernetes dashboard allowing you to observe Kubernetes resources of any type in any namespace (or across all namespaces) in real-time.
+A minimalistic Kubernetes dashboard showing the current state of Kubernetes resources of a specific type in real-time. The entire tool consists merely of a Bash script with about 50 lines of code.
 
-It's implemented as a Bash script with 50 lines of code.
+### What is it not?
 
-## What is it not?
+It's not a production-grade dashboard with many features. It's mainly intended for educational purposes.
 
-k1s does not attempt to be a fully-featured production-grade Kubernetes dashboard (for such cases, it would be better to use a real programming language, such as Go).
+### How does it work?
 
-Instead, it attempts to be as minimalistic as possible with the goal of being easy to install and use and adaptable to various use cases.
-
-## How does it work?
-
-With a lot of highly condensed Bash scripting. [This article](https://itnext.io/the-worlds-simplest-kubernetes-dashboard-k1s-4246e03191df) explains how the code works.
+With a lot of highly condensed Bash scripting. [This article](https://itnext.io/the-worlds-simplest-kubernetes-dashboard-k1s-4246e03191df) explains how it works in detail.
 
 ## Installation
 
@@ -39,148 +28,79 @@ brew install weibeld/tap/k1s
 
 ### On other systems
 
-Simply download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`. For example:
-
-```bash
-{
-  wget https://raw.githubusercontent.com/weibeld/k1s/master/k1s
-  chmod +x k1s
-  mv k1s /usr/local/bin
-}
-```
-
-## Dependencies
-
-The `k1s` script depends on the following tools being installed on your system:
-
-- [**`jq`**](https://stedolan.github.io/jq/)
-    ```bash
-    # macOS
-    brew install jq
-    # Linux
-    sudo apt-get install jq
-    ```
-- [**`watch`**](https://linux.die.net/man/1/watch)
-    ```bash
-    # macOS
-    brew install watch
-    # Linux (installed by default)
-    ```
-- [**`curl`**](https://curl.haxx.se/)
-    ```bash
-    # macOS (installed by default)
-    # Linux
-    sudo apt-get install curl
-    ```
-- [**`kubectl`**](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-    ```bash
-    # macOS
-    brew install kubernetes-cli
-    # Linux
-    # See https://kubernetes.io/docs/tasks/tools/install-kubectl/
-    ```
-
-## Usage
-
-The [`k1s`](k1s) script is run directly on your local machine. It has the following command-line interface:
-
-```bash
-k1s [namespace] [resource-type]
-```
-
-Both arguments are optional. The default values are:
-
-- `namespace`: _default_
-- `resource-type`: _pods_
-
-You can run multiple instances of the `k1s` script simultaneously.
-
-To exit the dashboard, type _Ctrl-C_.
-
-### Example usages
-
-Observe Pods in the `default` namespace:
-
-```bash
-k1s
-```
-
-Observe Pods in the `kube-system` namespace:
-
-```bash
-k1s kube-system
-```
-
-Observe Deployments in the `default` namespace:
-
-```bash
-k1s "" deployments
-```
-
-Observe Deployments in the `kube-system` namespace:
-
-```bash
-k1s kube-system deployments
-```
-
-Observe Deployments across all namespaces:
-
-```bash
-k1s - deployments
-```
-
-Observe ClusterRoles (non-namespaced resource):
-
-```bash
-k1s - clusterroles
-```
-
-### Resource types
-
-You can specify the desired resource type in any of the name variants accepted by Kubernetes. In general, this includes:
-
-- The plural form
-- The singular form
-- The shortname (if available)
-
-Furthermore, the capitalisation of the plural and singular forms doesn't matter.
-
-For example, all the following invocations are equivalent:
-
-```bash
-k1s default replicasets
-k1s default replicaset
-k1s default rs
-k1s default ReplicaSets
-k1s default ReplicaSet
-```
-
-> You can find out the shortnames of all Kubernetes resources that have one with `kubectl api-resources`.
-
-### All namespaces and non-namespaced resources
-
-You can specify `-` for the `namespace` argument to list the specified resource type across all namespaces of the cluster.
-
-For example, the following displays the Deployments from all the namespaces:
-
-```bash
-k1s - deployments
-```
-
-In the same way, you can list non-namespaced resources (such as Namespaces, ClusterRoles, PersistentVolumes, etc.).
+Simply download the [`k1s`](k1s) script, make it executable, and move it to any directory in your `PATH`.
 
 For example:
 
 ```bash
-k1s - persistentvolumes
+wget https://raw.githubusercontent.com/weibeld/k1s/master/k1s
+chmod +x k1s
+mv k1s /usr/local/bin
 ```
 
-> You can find out all the non-namespaced resources with `kubectl api-resources --namespaced=false`.
+### Dependencies
+
+The `k1s` script depends on the following tools:
+
+#### [`jq`](https://stedolan.github.io/jq/)
+
+| OS    | Installation              |
+|-------|---------------------------|
+| macOS | `brew install jq`         |
+| Linux | `sudo apt-get install jq` |
+
+#### [`watch`](https://linux.die.net/man/1/watch)
+
+| OS    | Installation               |
+|-------|----------------------------|
+| macOS | `brew install watch`       |
+| Linux | — _(installed by default)_ |
 
 
-## Usage scenario
+#### [`curl`](https://curl.haxx.se/)
 
-An example usage scenario of k1s is using multiple instances of k1s for observing what's going on under the hood of scaling and rolling update operations on a Deployment:
+| OS    | Installation               |
+|-------|----------------------------|
+| macOS | — _(installed by default)_ |
+| Linux | sudo apt-get install curl  |
+
+#### [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+| OS    | Installation                                                        |
+|-------|---------------------------------------------------------------------|
+| macOS | `brew install kubernetes-cli`                                       |
+| Linux | _See https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/_ |
+
+## Usage
+
+k1s runs directly on your local machine and it uses the usual [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) configuration on your machine. That means, it connects to the same cluster that also `kubectl` connects to by default.
+
+The command-line interface is as follows:
+
+```bash
+k1s [<namespace>] [<resource-type>]
+```
+
+Both arguments are optional. The default values are:
+
+| Argument          | Default value |
+|-------------------|---------------|
+| `<namespace>`     | `default`     |
+| `<resource-type>` | `pods`        |
+
+The `<namespace>` argument may be set to any valid namespace in the cluster. In addition, `<namespace>` may be set to `-` to imply "all namespaces" for namespaced resource types and "no namespace" for non-namespaced resource types (e.g. ClusterRoles).
+
+> You can find out which resource types are namespaced or non-namespaced with `kubectl api-resources --namespaced=true|false`.
+
+The `<resource-type>` argument may be set to any valid resource type name (including their singular, plural and short forms).
+
+> You can list all supported resource type names with `kubectl api-resources`.
+
+To exit the dashboard, type _Ctrl-C_.
+
+## Example usage scenario
+
+Below is an example usage scenario for k1s. It uses multiple instances of k1s for observing what's going on under the hood when scaling a Deployment:
 
 ![Example application](https://raw.githubusercontent.com/weibeld/k1s/master/assets/screencast-2.gif)
 
